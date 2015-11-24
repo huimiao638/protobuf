@@ -11,7 +11,7 @@ namespace Google.Protobuf.WellKnownTypes {
 
   /// <summary>Holder for reflection information generated from google/protobuf/wrappers.proto</summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-  public static partial class Wrappers {
+  public static partial class WrappersReflection {
 
     #region Descriptor
     /// <summary>File descriptor for google/protobuf/wrappers.proto</summary>
@@ -20,7 +20,7 @@ namespace Google.Protobuf.WellKnownTypes {
     }
     private static pbr::FileDescriptor descriptor;
 
-    static Wrappers() {
+    static WrappersReflection() {
       byte[] descriptorData = global::System.Convert.FromBase64String(
           string.Concat(
             "Ch5nb29nbGUvcHJvdG9idWYvd3JhcHBlcnMucHJvdG8SD2dvb2dsZS5wcm90",
@@ -32,18 +32,18 @@ namespace Google.Protobuf.WellKnownTypes {
             "DQoFdmFsdWUYASABKAkiGwoKQnl0ZXNWYWx1ZRINCgV2YWx1ZRgBIAEoDEJQ",
             "ChNjb20uZ29vZ2xlLnByb3RvYnVmQg1XcmFwcGVyc1Byb3RvUAGgAQGiAgNH",
             "UEKqAh5Hb29nbGUuUHJvdG9idWYuV2VsbEtub3duVHlwZXNiBnByb3RvMw=="));
-      descriptor = pbr::FileDescriptor.InternalBuildGeneratedFileFrom(descriptorData,
+      descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
           new pbr::GeneratedCodeInfo(null, new pbr::GeneratedCodeInfo[] {
-            new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.DoubleValue), new[]{ "Value" }, null, null, null),
-            new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.FloatValue), new[]{ "Value" }, null, null, null),
-            new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.Int64Value), new[]{ "Value" }, null, null, null),
-            new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.UInt64Value), new[]{ "Value" }, null, null, null),
-            new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.Int32Value), new[]{ "Value" }, null, null, null),
-            new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.UInt32Value), new[]{ "Value" }, null, null, null),
-            new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.BoolValue), new[]{ "Value" }, null, null, null),
-            new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.StringValue), new[]{ "Value" }, null, null, null),
-            new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.BytesValue), new[]{ "Value" }, null, null, null)
+            new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.DoubleValue), global::Google.Protobuf.WellKnownTypes.DoubleValue.Parser, new[]{ "Value" }, null, null, null),
+            new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.FloatValue), global::Google.Protobuf.WellKnownTypes.FloatValue.Parser, new[]{ "Value" }, null, null, null),
+            new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.Int64Value), global::Google.Protobuf.WellKnownTypes.Int64Value.Parser, new[]{ "Value" }, null, null, null),
+            new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.UInt64Value), global::Google.Protobuf.WellKnownTypes.UInt64Value.Parser, new[]{ "Value" }, null, null, null),
+            new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.Int32Value), global::Google.Protobuf.WellKnownTypes.Int32Value.Parser, new[]{ "Value" }, null, null, null),
+            new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.UInt32Value), global::Google.Protobuf.WellKnownTypes.UInt32Value.Parser, new[]{ "Value" }, null, null, null),
+            new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.BoolValue), global::Google.Protobuf.WellKnownTypes.BoolValue.Parser, new[]{ "Value" }, null, null, null),
+            new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.StringValue), global::Google.Protobuf.WellKnownTypes.StringValue.Parser, new[]{ "Value" }, null, null, null),
+            new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.BytesValue), global::Google.Protobuf.WellKnownTypes.BytesValue.Parser, new[]{ "Value" }, null, null, null)
           }));
     }
     #endregion
@@ -52,6 +52,7 @@ namespace Google.Protobuf.WellKnownTypes {
   #region Messages
   /// <summary>
   ///  Wrapper message for `double`.
+  ///
   ///  The JSON representation for `DoubleValue` is JSON number.
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -60,7 +61,7 @@ namespace Google.Protobuf.WellKnownTypes {
     public static pb::MessageParser<DoubleValue> Parser { get { return _parser; } }
 
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Google.Protobuf.WellKnownTypes.Wrappers.Descriptor.MessageTypes[0]; }
+      get { return global::Google.Protobuf.WellKnownTypes.WrappersReflection.Descriptor.MessageTypes[0]; }
     }
 
     pbr::MessageDescriptor pb::IMessage.Descriptor {
@@ -162,6 +163,7 @@ namespace Google.Protobuf.WellKnownTypes {
 
   /// <summary>
   ///  Wrapper message for `float`.
+  ///
   ///  The JSON representation for `FloatValue` is JSON number.
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -170,7 +172,7 @@ namespace Google.Protobuf.WellKnownTypes {
     public static pb::MessageParser<FloatValue> Parser { get { return _parser; } }
 
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Google.Protobuf.WellKnownTypes.Wrappers.Descriptor.MessageTypes[1]; }
+      get { return global::Google.Protobuf.WellKnownTypes.WrappersReflection.Descriptor.MessageTypes[1]; }
     }
 
     pbr::MessageDescriptor pb::IMessage.Descriptor {
@@ -272,6 +274,7 @@ namespace Google.Protobuf.WellKnownTypes {
 
   /// <summary>
   ///  Wrapper message for `int64`.
+  ///
   ///  The JSON representation for `Int64Value` is JSON string.
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -280,7 +283,7 @@ namespace Google.Protobuf.WellKnownTypes {
     public static pb::MessageParser<Int64Value> Parser { get { return _parser; } }
 
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Google.Protobuf.WellKnownTypes.Wrappers.Descriptor.MessageTypes[2]; }
+      get { return global::Google.Protobuf.WellKnownTypes.WrappersReflection.Descriptor.MessageTypes[2]; }
     }
 
     pbr::MessageDescriptor pb::IMessage.Descriptor {
@@ -382,6 +385,7 @@ namespace Google.Protobuf.WellKnownTypes {
 
   /// <summary>
   ///  Wrapper message for `uint64`.
+  ///
   ///  The JSON representation for `UInt64Value` is JSON string.
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -390,7 +394,7 @@ namespace Google.Protobuf.WellKnownTypes {
     public static pb::MessageParser<UInt64Value> Parser { get { return _parser; } }
 
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Google.Protobuf.WellKnownTypes.Wrappers.Descriptor.MessageTypes[3]; }
+      get { return global::Google.Protobuf.WellKnownTypes.WrappersReflection.Descriptor.MessageTypes[3]; }
     }
 
     pbr::MessageDescriptor pb::IMessage.Descriptor {
@@ -492,6 +496,7 @@ namespace Google.Protobuf.WellKnownTypes {
 
   /// <summary>
   ///  Wrapper message for `int32`.
+  ///
   ///  The JSON representation for `Int32Value` is JSON number.
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -500,7 +505,7 @@ namespace Google.Protobuf.WellKnownTypes {
     public static pb::MessageParser<Int32Value> Parser { get { return _parser; } }
 
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Google.Protobuf.WellKnownTypes.Wrappers.Descriptor.MessageTypes[4]; }
+      get { return global::Google.Protobuf.WellKnownTypes.WrappersReflection.Descriptor.MessageTypes[4]; }
     }
 
     pbr::MessageDescriptor pb::IMessage.Descriptor {
@@ -602,6 +607,7 @@ namespace Google.Protobuf.WellKnownTypes {
 
   /// <summary>
   ///  Wrapper message for `uint32`.
+  ///
   ///  The JSON representation for `UInt32Value` is JSON number.
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -610,7 +616,7 @@ namespace Google.Protobuf.WellKnownTypes {
     public static pb::MessageParser<UInt32Value> Parser { get { return _parser; } }
 
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Google.Protobuf.WellKnownTypes.Wrappers.Descriptor.MessageTypes[5]; }
+      get { return global::Google.Protobuf.WellKnownTypes.WrappersReflection.Descriptor.MessageTypes[5]; }
     }
 
     pbr::MessageDescriptor pb::IMessage.Descriptor {
@@ -712,6 +718,7 @@ namespace Google.Protobuf.WellKnownTypes {
 
   /// <summary>
   ///  Wrapper message for `bool`.
+  ///
   ///  The JSON representation for `BoolValue` is JSON `true` and `false`.
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -720,7 +727,7 @@ namespace Google.Protobuf.WellKnownTypes {
     public static pb::MessageParser<BoolValue> Parser { get { return _parser; } }
 
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Google.Protobuf.WellKnownTypes.Wrappers.Descriptor.MessageTypes[6]; }
+      get { return global::Google.Protobuf.WellKnownTypes.WrappersReflection.Descriptor.MessageTypes[6]; }
     }
 
     pbr::MessageDescriptor pb::IMessage.Descriptor {
@@ -822,6 +829,7 @@ namespace Google.Protobuf.WellKnownTypes {
 
   /// <summary>
   ///  Wrapper message for `string`.
+  ///
   ///  The JSON representation for `StringValue` is JSON string.
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -830,7 +838,7 @@ namespace Google.Protobuf.WellKnownTypes {
     public static pb::MessageParser<StringValue> Parser { get { return _parser; } }
 
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Google.Protobuf.WellKnownTypes.Wrappers.Descriptor.MessageTypes[7]; }
+      get { return global::Google.Protobuf.WellKnownTypes.WrappersReflection.Descriptor.MessageTypes[7]; }
     }
 
     pbr::MessageDescriptor pb::IMessage.Descriptor {
@@ -932,6 +940,7 @@ namespace Google.Protobuf.WellKnownTypes {
 
   /// <summary>
   ///  Wrapper message for `bytes`.
+  ///
   ///  The JSON representation for `BytesValue` is JSON string.
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -940,7 +949,7 @@ namespace Google.Protobuf.WellKnownTypes {
     public static pb::MessageParser<BytesValue> Parser { get { return _parser; } }
 
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Google.Protobuf.WellKnownTypes.Wrappers.Descriptor.MessageTypes[8]; }
+      get { return global::Google.Protobuf.WellKnownTypes.WrappersReflection.Descriptor.MessageTypes[8]; }
     }
 
     pbr::MessageDescriptor pb::IMessage.Descriptor {

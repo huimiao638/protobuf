@@ -81,6 +81,7 @@ _proto_gen = rule(
         "deps": attr.label_list(providers = ["proto"]),
         "includes": attr.string_list(),
         "protoc": attr.label(
+            cfg = HOST_CFG,
             executable = True,
             single_file = True,
             mandatory = True,
@@ -104,6 +105,10 @@ def cc_proto_library(
         default_runtime="//google/protobuf:protobuf",
         **kargs):
   """Bazel rule to create a C++ protobuf library from proto source files
+
+  NOTE: the rule is only an internal workaround to generate protos. The
+  interface may change and the rule may be removed when bazel has introduced
+  the native rule.
 
   Args:
     name: the name of the cc_proto_library.
@@ -206,6 +211,10 @@ def py_proto_library(
         protoc="//google/protobuf:protoc",
         **kargs):
   """Bazel rule to create a Python protobuf library from proto source files
+
+  NOTE: the rule is only an internal workaround to generate protos. The
+  interface may change and the rule may be removed when bazel has introduced
+  the native rule.
 
   Args:
     name: the name of the py_proto_library.

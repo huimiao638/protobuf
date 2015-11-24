@@ -9,52 +9,50 @@ using pbr = global::Google.Protobuf.Reflection;
 using scg = global::System.Collections.Generic;
 namespace Google.Protobuf.WellKnownTypes {
 
-  namespace Proto {
+  /// <summary>Holder for reflection information generated from google/protobuf/struct.proto</summary>
+  [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+  public static partial class StructReflection {
 
-    /// <summary>Holder for reflection information generated from google/protobuf/struct.proto</summary>
-    [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-    public static partial class Struct {
-
-      #region Descriptor
-      /// <summary>File descriptor for google/protobuf/struct.proto</summary>
-      public static pbr::FileDescriptor Descriptor {
-        get { return descriptor; }
-      }
-      private static pbr::FileDescriptor descriptor;
-
-      static Struct() {
-        byte[] descriptorData = global::System.Convert.FromBase64String(
-            string.Concat(
-              "Chxnb29nbGUvcHJvdG9idWYvc3RydWN0LnByb3RvEg9nb29nbGUucHJvdG9i",
-              "dWYihAEKBlN0cnVjdBIzCgZmaWVsZHMYASADKAsyIy5nb29nbGUucHJvdG9i",
-              "dWYuU3RydWN0LkZpZWxkc0VudHJ5GkUKC0ZpZWxkc0VudHJ5EgsKA2tleRgB",
-              "IAEoCRIlCgV2YWx1ZRgCIAEoCzIWLmdvb2dsZS5wcm90b2J1Zi5WYWx1ZToC",
-              "OAEi6gEKBVZhbHVlEjAKCm51bGxfdmFsdWUYASABKA4yGi5nb29nbGUucHJv",
-              "dG9idWYuTnVsbFZhbHVlSAASFgoMbnVtYmVyX3ZhbHVlGAIgASgBSAASFgoM",
-              "c3RyaW5nX3ZhbHVlGAMgASgJSAASFAoKYm9vbF92YWx1ZRgEIAEoCEgAEi8K",
-              "DHN0cnVjdF92YWx1ZRgFIAEoCzIXLmdvb2dsZS5wcm90b2J1Zi5TdHJ1Y3RI",
-              "ABIwCgpsaXN0X3ZhbHVlGAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLkxpc3RW",
-              "YWx1ZUgAQgYKBGtpbmQiMwoJTGlzdFZhbHVlEiYKBnZhbHVlcxgBIAMoCzIW",
-              "Lmdvb2dsZS5wcm90b2J1Zi5WYWx1ZSobCglOdWxsVmFsdWUSDgoKTlVMTF9W",
-              "QUxVRRAAQk4KE2NvbS5nb29nbGUucHJvdG9idWZCC1N0cnVjdFByb3RvUAGg",
-              "AQGiAgNHUEKqAh5Hb29nbGUuUHJvdG9idWYuV2VsbEtub3duVHlwZXNiBnBy",
-              "b3RvMw=="));
-        descriptor = pbr::FileDescriptor.InternalBuildGeneratedFileFrom(descriptorData,
-            new pbr::FileDescriptor[] { },
-            new pbr::GeneratedCodeInfo(new[] {typeof(global::Google.Protobuf.WellKnownTypes.NullValue), }, new pbr::GeneratedCodeInfo[] {
-              new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.Struct), new[]{ "Fields" }, null, null, new pbr::GeneratedCodeInfo[] { null, }),
-              new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.Value), new[]{ "NullValue", "NumberValue", "StringValue", "BoolValue", "StructValue", "ListValue" }, new[]{ "Kind" }, null, null),
-              new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.ListValue), new[]{ "Values" }, null, null, null)
-            }));
-      }
-      #endregion
-
+    #region Descriptor
+    /// <summary>File descriptor for google/protobuf/struct.proto</summary>
+    public static pbr::FileDescriptor Descriptor {
+      get { return descriptor; }
     }
+    private static pbr::FileDescriptor descriptor;
+
+    static StructReflection() {
+      byte[] descriptorData = global::System.Convert.FromBase64String(
+          string.Concat(
+            "Chxnb29nbGUvcHJvdG9idWYvc3RydWN0LnByb3RvEg9nb29nbGUucHJvdG9i",
+            "dWYihAEKBlN0cnVjdBIzCgZmaWVsZHMYASADKAsyIy5nb29nbGUucHJvdG9i",
+            "dWYuU3RydWN0LkZpZWxkc0VudHJ5GkUKC0ZpZWxkc0VudHJ5EgsKA2tleRgB",
+            "IAEoCRIlCgV2YWx1ZRgCIAEoCzIWLmdvb2dsZS5wcm90b2J1Zi5WYWx1ZToC",
+            "OAEi6gEKBVZhbHVlEjAKCm51bGxfdmFsdWUYASABKA4yGi5nb29nbGUucHJv",
+            "dG9idWYuTnVsbFZhbHVlSAASFgoMbnVtYmVyX3ZhbHVlGAIgASgBSAASFgoM",
+            "c3RyaW5nX3ZhbHVlGAMgASgJSAASFAoKYm9vbF92YWx1ZRgEIAEoCEgAEi8K",
+            "DHN0cnVjdF92YWx1ZRgFIAEoCzIXLmdvb2dsZS5wcm90b2J1Zi5TdHJ1Y3RI",
+            "ABIwCgpsaXN0X3ZhbHVlGAYgASgLMhouZ29vZ2xlLnByb3RvYnVmLkxpc3RW",
+            "YWx1ZUgAQgYKBGtpbmQiMwoJTGlzdFZhbHVlEiYKBnZhbHVlcxgBIAMoCzIW",
+            "Lmdvb2dsZS5wcm90b2J1Zi5WYWx1ZSobCglOdWxsVmFsdWUSDgoKTlVMTF9W",
+            "QUxVRRAAQk4KE2NvbS5nb29nbGUucHJvdG9idWZCC1N0cnVjdFByb3RvUAGg",
+            "AQGiAgNHUEKqAh5Hb29nbGUuUHJvdG9idWYuV2VsbEtub3duVHlwZXNiBnBy",
+            "b3RvMw=="));
+      descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
+          new pbr::FileDescriptor[] { },
+          new pbr::GeneratedCodeInfo(new[] {typeof(global::Google.Protobuf.WellKnownTypes.NullValue), }, new pbr::GeneratedCodeInfo[] {
+            new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.Struct), global::Google.Protobuf.WellKnownTypes.Struct.Parser, new[]{ "Fields" }, null, null, new pbr::GeneratedCodeInfo[] { null, }),
+            new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.Value), global::Google.Protobuf.WellKnownTypes.Value.Parser, new[]{ "NullValue", "NumberValue", "StringValue", "BoolValue", "StructValue", "ListValue" }, new[]{ "Kind" }, null, null),
+            new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.ListValue), global::Google.Protobuf.WellKnownTypes.ListValue.Parser, new[]{ "Values" }, null, null, null)
+          }));
+    }
+    #endregion
+
   }
   #region Enums
   /// <summary>
   ///  `NullValue` is a singleton enumeration to represent the null value for the
   ///  `Value` type union.
+  ///
   ///   The JSON representation for `NullValue` is JSON `null`.
   /// </summary>
   public enum NullValue {
@@ -74,6 +72,7 @@ namespace Google.Protobuf.WellKnownTypes {
   ///  scripting languages like JS a struct is represented as an
   ///  object. The details of that representation are described together
   ///  with the proto support for the language.
+  ///
   ///  The JSON representation for `Struct` is JSON object.
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -82,7 +81,7 @@ namespace Google.Protobuf.WellKnownTypes {
     public static pb::MessageParser<Struct> Parser { get { return _parser; } }
 
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Google.Protobuf.WellKnownTypes.Proto.Struct.Descriptor.MessageTypes[0]; }
+      get { return global::Google.Protobuf.WellKnownTypes.StructReflection.Descriptor.MessageTypes[0]; }
     }
 
     pbr::MessageDescriptor pb::IMessage.Descriptor {
@@ -179,6 +178,7 @@ namespace Google.Protobuf.WellKnownTypes {
   ///  null, a number, a string, a boolean, a recursive struct value, or a
   ///  list of values. A producer of value is expected to set one of that
   ///  variants, absence of any variant indicates an error.
+  ///
   ///  The JSON representation for `Value` is JSON value.
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -187,7 +187,7 @@ namespace Google.Protobuf.WellKnownTypes {
     public static pb::MessageParser<Value> Parser { get { return _parser; } }
 
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Google.Protobuf.WellKnownTypes.Proto.Struct.Descriptor.MessageTypes[1]; }
+      get { return global::Google.Protobuf.WellKnownTypes.StructReflection.Descriptor.MessageTypes[1]; }
     }
 
     pbr::MessageDescriptor pb::IMessage.Descriptor {
@@ -491,6 +491,7 @@ namespace Google.Protobuf.WellKnownTypes {
 
   /// <summary>
   ///  `ListValue` is a wrapper around a repeated field of values.
+  ///
   ///  The JSON representation for `ListValue` is JSON array.
   /// </summary>
   [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -499,7 +500,7 @@ namespace Google.Protobuf.WellKnownTypes {
     public static pb::MessageParser<ListValue> Parser { get { return _parser; } }
 
     public static pbr::MessageDescriptor Descriptor {
-      get { return global::Google.Protobuf.WellKnownTypes.Proto.Struct.Descriptor.MessageTypes[2]; }
+      get { return global::Google.Protobuf.WellKnownTypes.StructReflection.Descriptor.MessageTypes[2]; }
     }
 
     pbr::MessageDescriptor pb::IMessage.Descriptor {

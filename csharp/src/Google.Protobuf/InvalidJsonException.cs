@@ -1,5 +1,6 @@
+#region Copyright notice and license
 // Protocol Buffers - Google's data interchange format
-// Copyright 2008 Google Inc.  All rights reserved.
+// Copyright 2015 Google Inc.  All rights reserved.
 // https://developers.google.com/protocol-buffers/
 //
 // Redistribution and use in source and binary forms, with or without
@@ -27,31 +28,26 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#endregion
 
-#import "GPBBootstrap.h"
+using System.IO;
 
-#import "GPBArray.h"
-#import "GPBCodedInputStream.h"
-#import "GPBCodedOutputStream.h"
-#import "GPBDescriptor.h"
-#import "GPBDictionary.h"
-#import "GPBExtensionRegistry.h"
-#import "GPBMessage.h"
-#import "GPBRootObject.h"
-#import "GPBUnknownField.h"
-#import "GPBUnknownFieldSet.h"
-#import "GPBUtilities.h"
-#import "GPBWellKnownTypes.h"
-#import "GPBWireFormat.h"
-
-// Well-known proto types
-#import "google/protobuf/Any.pbobjc.h"
-#import "google/protobuf/Api.pbobjc.h"
-#import "google/protobuf/Duration.pbobjc.h"
-#import "google/protobuf/Empty.pbobjc.h"
-#import "google/protobuf/FieldMask.pbobjc.h"
-#import "google/protobuf/SourceContext.pbobjc.h"
-#import "google/protobuf/Struct.pbobjc.h"
-#import "google/protobuf/Timestamp.pbobjc.h"
-#import "google/protobuf/Type.pbobjc.h"
-#import "google/protobuf/Wrappers.pbobjc.h"
+namespace Google.Protobuf
+{
+    /// <summary>
+    /// Thrown when an attempt is made to parse invalid JSON, e.g. using
+    /// a non-string property key, or including a redundant comma. Parsing a protocol buffer
+    /// message represented in JSON using <see cref="JsonParser"/> can throw both this
+    /// exception and <see cref="InvalidProtocolBufferException"/> depending on the situation. This
+    /// exception is only thrown for "pure JSON" errors, whereas <c>InvalidProtocolBufferException</c>
+    /// is thrown when the JSON may be valid in and of itself, but cannot be parsed as a protocol buffer
+    /// message.
+    /// </summary>
+    public sealed class InvalidJsonException : IOException
+    {
+        internal InvalidJsonException(string message)
+            : base(message)
+        {
+        }
+    }
+}

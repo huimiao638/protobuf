@@ -1,3 +1,4 @@
+﻿#region Copyright notice and license
 // Protocol Buffers - Google's data interchange format
 // Copyright 2008 Google Inc.  All rights reserved.
 // https://developers.google.com/protocol-buffers/
@@ -27,31 +28,15 @@
 // THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+#endregion
 
-#import "GPBBootstrap.h"
-
-#import "GPBArray.h"
-#import "GPBCodedInputStream.h"
-#import "GPBCodedOutputStream.h"
-#import "GPBDescriptor.h"
-#import "GPBDictionary.h"
-#import "GPBExtensionRegistry.h"
-#import "GPBMessage.h"
-#import "GPBRootObject.h"
-#import "GPBUnknownField.h"
-#import "GPBUnknownFieldSet.h"
-#import "GPBUtilities.h"
-#import "GPBWellKnownTypes.h"
-#import "GPBWireFormat.h"
-
-// Well-known proto types
-#import "google/protobuf/Any.pbobjc.h"
-#import "google/protobuf/Api.pbobjc.h"
-#import "google/protobuf/Duration.pbobjc.h"
-#import "google/protobuf/Empty.pbobjc.h"
-#import "google/protobuf/FieldMask.pbobjc.h"
-#import "google/protobuf/SourceContext.pbobjc.h"
-#import "google/protobuf/Struct.pbobjc.h"
-#import "google/protobuf/Timestamp.pbobjc.h"
-#import "google/protobuf/Type.pbobjc.h"
-#import "google/protobuf/Wrappers.pbobjc.h"
+namespace Google.Protobuf.WellKnownTypes
+{
+    public static partial class WrappersReflection
+    {
+        /// <summary>
+        /// Field number for the single "value" field in all wrapper types.
+        /// </summary>
+        internal const int WrapperValueFieldNumber = Int32Value.ValueFieldNumber;
+    }
+}

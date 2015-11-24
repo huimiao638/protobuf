@@ -35,6 +35,10 @@ clean-local:
 	if test -e conformance/Makefile; then \
 	  echo "Making clean in conformance"; \
 	  cd conformance && $(MAKE) $(AM_MAKEFLAGS) clean; \
+	fi; \
+	if test -e objectivec/DevTools; then \
+	  echo "Cleaning any ObjC pyc files"; \
+	  rm -f objectivec/DevTools/*.pyc; \
 	fi
 
 pkgconfigdir = $(libdir)/pkgconfig
@@ -82,6 +86,8 @@ csharp_EXTRA_DIST=                                                           \
   csharp/src/Google.Protobuf.Test/Google.Protobuf.Test.csproj                \
   csharp/src/Google.Protobuf.Test/IssuesTest.cs                              \
   csharp/src/Google.Protobuf.Test/JsonFormatterTest.cs                       \
+  csharp/src/Google.Protobuf.Test/JsonParserTest.cs                          \
+  csharp/src/Google.Protobuf.Test/JsonTokenizerTest.cs                       \
   csharp/src/Google.Protobuf.Test/Properties/AppManifest.xml                 \
   csharp/src/Google.Protobuf.Test/Properties/AssemblyInfo.cs                 \
   csharp/src/Google.Protobuf.Test/Reflection/DescriptorsTest.cs              \
@@ -117,16 +123,20 @@ csharp_EXTRA_DIST=                                                           \
   csharp/src/Google.Protobuf/Google.Protobuf.nuspec                          \
   csharp/src/Google.Protobuf/IDeepCloneable.cs                               \
   csharp/src/Google.Protobuf/IMessage.cs                                     \
+  csharp/src/Google.Protobuf/InvalidJsonException.cs                         \
   csharp/src/Google.Protobuf/InvalidProtocolBufferException.cs               \
   csharp/src/Google.Protobuf/JsonFormatter.cs                                \
+  csharp/src/Google.Protobuf/JsonParser.cs                                   \
+  csharp/src/Google.Protobuf/JsonToken.cs                                    \
+  csharp/src/Google.Protobuf/JsonTokenizer.cs                                \
   csharp/src/Google.Protobuf/LimitedInputStream.cs                           \
   csharp/src/Google.Protobuf/MessageExtensions.cs                            \
   csharp/src/Google.Protobuf/MessageParser.cs                                \
   csharp/src/Google.Protobuf/Preconditions.cs                                \
   csharp/src/Google.Protobuf/Properties/AssemblyInfo.cs                      \
+  csharp/src/Google.Protobuf/Reflection/Descriptor.cs                        \
   csharp/src/Google.Protobuf/Reflection/DescriptorBase.cs                    \
   csharp/src/Google.Protobuf/Reflection/DescriptorPool.cs                    \
-  csharp/src/Google.Protobuf/Reflection/DescriptorProtoFile.cs               \
   csharp/src/Google.Protobuf/Reflection/DescriptorUtil.cs                    \
   csharp/src/Google.Protobuf/Reflection/DescriptorValidationException.cs     \
   csharp/src/Google.Protobuf/Reflection/EnumDescriptor.cs                    \

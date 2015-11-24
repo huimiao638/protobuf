@@ -84,16 +84,20 @@
     <Compile Include="FieldCodec.cs" />
     <Compile Include="FrameworkPortability.cs" />
     <Compile Include="IDeepCloneable.cs" />
+    <Compile Include="InvalidJsonException.cs" />
     <Compile Include="JsonFormatter.cs" />
+    <Compile Include="JsonParser.cs" />
+    <Compile Include="JsonToken.cs" />
+    <Compile Include="JsonTokenizer.cs" />
     <Compile Include="MessageExtensions.cs" />
     <Compile Include="IMessage.cs" />
     <Compile Include="InvalidProtocolBufferException.cs" />
     <Compile Include="LimitedInputStream.cs" />
     <Compile Include="MessageParser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Reflection\Descriptor.cs" />
     <Compile Include="Reflection\DescriptorBase.cs" />
     <Compile Include="Reflection\DescriptorPool.cs" />
-    <Compile Include="Reflection\DescriptorProtoFile.cs" />
     <Compile Include="Reflection\DescriptorUtil.cs" />
     <Compile Include="Reflection\DescriptorValidationException.cs" />
     <Compile Include="Reflection\EnumDescriptor.cs" />
@@ -117,6 +121,7 @@
     <Compile Include="Reflection\ServiceDescriptor.cs" />
     <Compile Include="Reflection\SingleFieldAccessor.cs" />
     <Compile Include="Preconditions.cs" />
+    <Compile Include="Reflection\TypeRegistry.cs" />
     <Compile Include="WellKnownTypes\Any.cs" />
     <Compile Include="WellKnownTypes\AnyPartial.cs" />
     <Compile Include="WellKnownTypes\Api.cs" />
@@ -130,7 +135,9 @@
     <Compile Include="WellKnownTypes\Timestamp.cs" />
     <Compile Include="WellKnownTypes\TimestampPartial.cs" />
     <Compile Include="WellKnownTypes\Type.cs" />
+    <Compile Include="WellKnownTypes\ValuePartial.cs" />
     <Compile Include="WellKnownTypes\Wrappers.cs" />
+    <Compile Include="WellKnownTypes\WrappersPartial.cs" />
     <Compile Include="WireFormat.cs" />
   </ItemGroup>
   <ItemGroup>

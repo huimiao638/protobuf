@@ -112,7 +112,12 @@ build_javanano_oracle7() {
 }
 
 internal_install_python_deps() {
-  sudo pip install tox
+  # Install tox (OS X doesn't have pip).
+  if [ $(uname -s) == "Darwin" ]; then
+    sudo easy_install tox
+  else
+    sudo pip install tox
+  fi
   # Only install Python2.6/3.x on Linux.
   if [ $(uname -s) == "Linux" ]; then
     sudo apt-get install -y python-software-properties # for apt-add-repository
@@ -124,6 +129,58 @@ internal_install_python_deps() {
   fi
 }
 
+internal_objectivec_common () {
+  # Make sure xctool is up to date. Adapted from
+  #  http://docs.travis-ci.com/user/osx-ci-environment/
+  # We don't use a before_install because we test multiple OSes.
+  brew update
+  brew outdated xctool || brew upgrade xctool
+  # Reused the build script that takes care of configuring and ensuring things
+  # are up to date. Xcode and conformance tests will be directly invoked.
+  objectivec/DevTools/full_mac_build.sh \
+      --core-only --skip-xcode --skip-objc-conformance
+}
+
+internal_xctool_debug_and_release() {
+  xctool -configuration Debug "$@"
+  xctool -configuration Release "$@"
+}
+
+build_objectivec_ios() {
+  internal_objectivec_common
+  # https://github.com/facebook/xctool/issues/509 - unlike xcodebuild, xctool
+  # doesn't support >1 destination, so we have to build first and then run the
+  # tests one destination at a time.
+  internal_xctool_debug_and_release \
+    -project objectivec/ProtocolBuffers_iOS.xcodeproj \
+    -scheme ProtocolBuffers \
+    -sdk iphonesimulator \
+    build-tests
+  IOS_DESTINATIONS=(
+    "platform=iOS Simulator,name=iPhone 4s,OS=8.1" # 32bit
+    "platform=iOS Simulator,name=iPhone 6,OS=9.1" # 64bit
+    "platform=iOS Simulator,name=iPad 2,OS=8.1" # 32bit
+    "platform=iOS Simulator,name=iPad Air,OS=9.1" # 64bit
+  )
+  for i in "${IOS_DESTINATIONS[@]}" ; do
+    internal_xctool_debug_and_release \
+      -project objectivec/ProtocolBuffers_iOS.xcodeproj \
+      -scheme ProtocolBuffers \
+      -sdk iphonesimulator \
+      -destination "${i}" \
+      run-tests
+  done
+}
+
+build_objectivec_osx() {
+  internal_objectivec_common
+  internal_xctool_debug_and_release \
+    -project objectivec/ProtocolBuffers_OSX.xcodeproj \
+    -scheme ProtocolBuffers \
+    -destination "platform=OS X,arch=x86_64" \
+    test
+  cd conformance && make test_objc && cd ..
+}
 
 build_python() {
   internal_build_cpp
@@ -189,6 +246,8 @@ Usage: $0 { cpp |
             javanano_jdk6 |
             javanano_jdk7 |
             javanano_oracle7 |
+            objectivec_ios |
+            objectivec_osx |
             python |
             python_cpp |
             ruby_19 |
