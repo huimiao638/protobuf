@@ -49,7 +49,11 @@ namespace protobuf {
 class FieldDescriptor;
 class Message;
 
+#ifdef _SHARED_PTR_H
+using shared_ptr;
+#else
 using internal::shared_ptr;
+#endif
 
 namespace python {
 

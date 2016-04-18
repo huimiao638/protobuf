@@ -47,6 +47,7 @@
 
 #include <google/protobuf/stubs/callback.h>
 #include <google/protobuf/stubs/common.h>
+#include <google/protobuf/stubs/logging.h>
 #include <google/protobuf/stubs/stringprintf.h>
 #include <google/protobuf/any.h>
 #include <google/protobuf/io/printer.h>
@@ -238,7 +239,23 @@ void MessageDifferencer::TreatAsSet(const FieldDescriptor* field) {
   GOOGLE_CHECK(key_comparator == NULL)
       << "Cannot treat this repeated field as both Map and Set for"
       << " comparison.  Field name is: " << field->full_name();
+  GOOGLE_CHECK(list_fields_.find(field) == list_fields_.end())
+      << "Cannot treat the same field as both SET and LIST. Field name is: "
+      << field->full_name();
   set_fields_.insert(field);
+}
+
+void MessageDifferencer::TreatAsList(const FieldDescriptor* field) {
+  GOOGLE_CHECK(field->is_repeated()) << "Field must be repeated: "
+                              << field->full_name();
+  const MapKeyComparator* key_comparator = GetMapKeyComparator(field);
+  GOOGLE_CHECK(key_comparator == NULL)
+      << "Cannot treat this repeated field as both Map and Set for"
+      << " comparison.  Field name is: " << field->full_name();
+  GOOGLE_CHECK(set_fields_.find(field) == set_fields_.end())
+      << "Cannot treat the same field as both SET and LIST. Field name is: "
+      << field->full_name();
+  list_fields_.insert(field);
 }
 
 void MessageDifferencer::TreatAsMap(const FieldDescriptor* field,
@@ -254,6 +271,9 @@ void MessageDifferencer::TreatAsMap(const FieldDescriptor* field,
       << field->full_name() << ", not " << key->containing_type()->full_name();
   GOOGLE_CHECK(set_fields_.find(field) == set_fields_.end())
       << "Cannot treat this repeated field as both Map and Set for "
+      << "comparison.";
+  GOOGLE_CHECK(list_fields_.find(field) == list_fields_.end())
+      << "Cannot treat this repeated field as both Map and List for "
       << "comparison.";
   MapKeyComparator* key_comparator =
       new MultipleFieldsMapKeyComparator(this, key);
@@ -920,7 +940,8 @@ bool MessageDifferencer::CheckPathChanged(
 bool MessageDifferencer::IsTreatedAsSet(const FieldDescriptor* field) {
   if (!field->is_repeated()) return false;
   if (field->is_map()) return true;
-  if (repeated_field_comparison_ == AS_SET) return true;
+  if (repeated_field_comparison_ == AS_SET)
+    return list_fields_.find(field) == list_fields_.end();
   return (set_fields_.find(field) != set_fields_.end());
 }
 
@@ -1001,7 +1022,7 @@ bool MessageDifferencer::UnpackAny(const Message& any,
       any.GetDescriptor()->file()->pool()->FindMessageTypeByName(
           full_type_name);
   if (desc == NULL) {
-    GOOGLE_LOG(ERROR) << "Proto type '" << full_type_name << "' not found";
+    GOOGLE_DLOG(ERROR) << "Proto type '" << full_type_name << "' not found";
     return false;
   }
 
@@ -1011,7 +1032,7 @@ bool MessageDifferencer::UnpackAny(const Message& any,
   data->reset(dynamic_message_factory_->GetPrototype(desc)->New());
   string serialized_value = reflection->GetString(any, value_field);
   if (!(*data)->ParseFromString(serialized_value)) {
-    GOOGLE_LOG(ERROR) << "Failed to parse value for " << full_type_name;
+    GOOGLE_DLOG(ERROR) << "Failed to parse value for " << full_type_name;
     return false;
   }
   return true;

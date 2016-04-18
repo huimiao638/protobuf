@@ -69,11 +69,12 @@ EnumGenerator::EnumGenerator(const EnumDescriptor* descriptor,
 
 EnumGenerator::~EnumGenerator() {}
 
-void EnumGenerator::FillForwardDeclaration(set<string>* enum_names) {
+void EnumGenerator::FillForwardDeclaration(
+    map<string, const EnumDescriptor*>* enum_names) {
   if (!options_.proto_h) {
     return;
   }
-  enum_names->insert(classname_);
+  (*enum_names)[classname_] = descriptor_;
 }
 
 void EnumGenerator::GenerateDefinition(io::Printer* printer) {
@@ -83,6 +84,7 @@ void EnumGenerator::GenerateDefinition(io::Printer* printer) {
   vars["enumbase"] = classname_ + (options_.proto_h ? " : int" : "");
 
   printer->Print(vars, "enum $enumbase$ {\n");
+  printer->Annotate("enumbase", descriptor_);
   printer->Indent();
 
   const EnumValueDescriptor* min_value = descriptor_->value(0);
@@ -178,12 +180,13 @@ void EnumGenerator::GenerateSymbolImports(io::Printer* printer) {
   map<string, string> vars;
   vars["nested_name"] = descriptor_->name();
   vars["classname"] = classname_;
+  vars["constexpr"] = options_.proto_h ? "constexpr " : "";
   printer->Print(vars, "typedef $classname$ $nested_name$;\n");
 
   for (int j = 0; j < descriptor_->value_count(); j++) {
     vars["tag"] = EnumValueName(descriptor_->value(j));
     printer->Print(vars,
-      "static const $nested_name$ $tag$ = $classname$_$tag$;\n");
+      "static $constexpr$const $nested_name$ $tag$ = $classname$_$tag$;\n");
   }
 
   printer->Print(vars,
@@ -237,6 +240,7 @@ void EnumGenerator::GenerateDescriptorInitializer(
 void EnumGenerator::GenerateMethods(io::Printer* printer) {
   map<string, string> vars;
   vars["classname"] = classname_;
+  vars["constexpr"] = options_.proto_h ? "constexpr " : "";
 
   if (HasDescriptorMethods(descriptor_->file())) {
     printer->Print(vars,
@@ -287,7 +291,7 @@ void EnumGenerator::GenerateMethods(io::Printer* printer) {
     for (int i = 0; i < descriptor_->value_count(); i++) {
       vars["value"] = EnumValueName(descriptor_->value(i));
       printer->Print(vars,
-        "const $classname$ $parent$::$value$;\n");
+        "$constexpr$const $classname$ $parent$::$value$;\n");
     }
     printer->Print(vars,
       "const $classname$ $parent$::$nested_name$_MIN;\n"

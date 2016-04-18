@@ -1,7 +1,16 @@
 ## Process this file with automake to produce Makefile.in
 
-protoc_inputs =                                                \
+conformance_protoc_inputs =                                    \
   conformance.proto
+
+well_known_type_protoc_inputs =                                \
+  $(top_srcdir)/src/google/protobuf/any.proto                  \
+  $(top_srcdir)/src/google/protobuf/duration.proto             \
+  $(top_srcdir)/src/google/protobuf/field_mask.proto           \
+  $(top_srcdir)/src/google/protobuf/struct.proto               \
+  $(top_srcdir)/src/google/protobuf/timestamp.proto            \
+  $(top_srcdir)/src/google/protobuf/wrappers.proto
+
 
 protoc_outputs =                                               \
   conformance.pb.cc                                            \
@@ -10,15 +19,40 @@ protoc_outputs =                                               \
 other_language_protoc_outputs =                                \
   conformance.rb                                               \
   com/google/protobuf/conformance/Conformance.java             \
+  lite/com/google/protobuf/conformance/Conformance.java        \
+  conformance_pb2.py                                           \
   Conformance.pbobjc.h                                         \
   Conformance.pbobjc.m
 
 bin_PROGRAMS = conformance-test-runner conformance-cpp
 
+# All source files excepet C++/Objective-C ones should be explicitly listed
+# here because the autoconf tools don't include files of other languages
+# automatically.
+EXTRA_DIST =                  \
+  ConformanceJava.java        \
+  ConformanceJavaLite.java    \
+  README.md                   \
+  conformance.proto           \
+  conformance_python.py       \
+  conformance_ruby.rb         \
+  failure_list_cpp.txt        \
+  failure_list_csharp.txt     \
+  failure_list_java.txt       \
+  failure_list_objc.txt       \
+  failure_list_python.txt     \
+  failure_list_python_cpp.txt \
+  failure_list_python-post26.txt \
+  failure_list_ruby.txt
+
 conformance_test_runner_LDADD = $(top_srcdir)/src/libprotobuf.la
-conformance_test_runner_SOURCES = conformance_test.cc conformance_test_runner.cc
+conformance_test_runner_SOURCES = conformance_test.h conformance_test.cc \
+                                  conformance_test_runner.cc             \
+                                  third_party/jsoncpp/json.h             \
+                                  third_party/jsoncpp/jsoncpp.cpp
 nodist_conformance_test_runner_SOURCES = conformance.pb.cc
-conformance_test_runner_CPPFLAGS = -I$(top_srcdir)/src
+conformance_test_runner_CPPFLAGS = -I$(top_srcdir)/src -I$(srcdir)
+conformance_test_runner_CXXFLAGS = -std=c++11
 # Explicit deps beacuse BUILT_SOURCES are only done before a "make all/check"
 # so a direct "make test_cpp" could fail if parallel enough.
 conformance_test_runner-conformance_test.$(OBJEXT): conformance.pb.h
@@ -52,8 +86,11 @@ endif
 
 if USE_EXTERNAL_PROTOC
 
-protoc_middleman: $(protoc_inputs)
-	$(PROTOC) -I$(srcdir) --cpp_out=. --java_out=. --ruby_out=. --objc_out=. --python_out=.$^
+# Some implementations include pre-generated versions of well-known types.
+protoc_middleman: $(conformance_protoc_inputs) $(well_known_type_protoc_inputs)
+	$(PROTOC) -I$(srcdir) -I$(top_srcdir) --cpp_out=. --java_out=. --ruby_out=. --objc_out=. --python_out=. $(conformance_protoc_inputs)
+	$(PROTOC) -I$(srcdir) -I$(top_srcdir) --cpp_out=. --java_out=. --ruby_out=. --python_out=. $(well_known_type_protoc_inputs)
+	$(PROTOC) -I$(srcdir) -I$(top_srcdir) --java_out=lite:lite $(conformance_protoc_inputs) $(well_known_type_protoc_inputs)
 	touch protoc_middleman
 
 else
@@ -61,8 +98,11 @@ else
 # We have to cd to $(srcdir) before executing protoc because $(protoc_inputs) is
 # relative to srcdir, which may not be the same as the current directory when
 # building out-of-tree.
-protoc_middleman: $(top_srcdir)/src/protoc$(EXEEXT) $(protoc_inputs)
-	oldpwd=`pwd` && ( cd $(srcdir) && $$oldpwd/../src/protoc$(EXEEXT) -I. --cpp_out=$$oldpwd --java_out=$$oldpwd --ruby_out=$$oldpwd --objc_out=$$oldpwd --python_out=$$oldpwd $(protoc_inputs) )
+protoc_middleman: $(top_srcdir)/src/protoc$(EXEEXT) $(conformance_protoc_inputs) $(well_known_type_protoc_inputs)
+	oldpwd=`pwd` && ( cd $(srcdir) && $$oldpwd/../src/protoc$(EXEEXT) -I. -I$(top_srcdir)/src --cpp_out=$$oldpwd --java_out=$$oldpwd --ruby_out=$$oldpwd --objc_out=$$oldpwd --python_out=$$oldpwd $(conformance_protoc_inputs) )
+	oldpwd=`pwd` && ( cd $(srcdir) && $$oldpwd/../src/protoc$(EXEEXT) -I. -I$(top_srcdir)/src --cpp_out=$$oldpwd --java_out=$$oldpwd --ruby_out=$$oldpwd --python_out=$$oldpwd $(well_known_type_protoc_inputs) )
+	@mkdir -p lite
+	oldpwd=`pwd` && ( cd $(srcdir) && $$oldpwd/../src/protoc$(EXEEXT) -I. -I$(top_srcdir)/src --java_out=lite:$$oldpwd/lite $(conformance_protoc_inputs) $(well_known_type_protoc_inputs) )
 	touch protoc_middleman
 
 endif
@@ -73,20 +113,30 @@ $(other_language_protoc_outputs): protoc_middleman
 
 BUILT_SOURCES = $(protoc_outputs) $(other_language_protoc_outputs)
 
-CLEANFILES = $(protoc_outputs) protoc_middleman javac_middleman conformance-java conformance-csharp $(other_language_protoc_outputs)
+CLEANFILES = $(protoc_outputs) protoc_middleman javac_middleman conformance-java javac_middleman_lite conformance-java-lite conformance-csharp $(other_language_protoc_outputs)
 
 MAINTAINERCLEANFILES =   \
   Makefile.in
 
 javac_middleman: ConformanceJava.java protoc_middleman $(other_language_protoc_outputs)
-	javac -classpath ../java/target/classes ConformanceJava.java com/google/protobuf/conformance/Conformance.java
+	jar=`ls ../java/util/target/*jar-with-dependencies.jar` && javac -classpath ../java/target/classes:$$jar ConformanceJava.java com/google/protobuf/conformance/Conformance.java
 	@touch javac_middleman
 
 conformance-java: javac_middleman
 	@echo "Writing shortcut script conformance-java..."
 	@echo '#! /bin/sh' > conformance-java
-	@echo 'java -classpath .:../java/target/classes ConformanceJava "$$@"' >> conformance-java
+	@jar=`ls ../java/util/target/*jar-with-dependencies.jar` && echo java -classpath .:../java/target/classes:$$jar ConformanceJava '$$@' >> conformance-java
 	@chmod +x conformance-java
+
+javac_middleman_lite: ConformanceJavaLite.java protoc_middleman $(other_language_protoc_outputs)
+	javac -classpath ../java/lite/target/classes:lite ConformanceJavaLite.java lite/com/google/protobuf/conformance/Conformance.java
+	@touch javac_middleman_lite
+
+conformance-java-lite: javac_middleman_lite
+	@echo "Writing shortcut script conformance-java-lite..."
+	@echo '#! /bin/sh' > conformance-java-lite
+	@echo java -classpath .:../java/lite/target/classes:lite ConformanceJavaLite '$$@' >> conformance-java-lite
+	@chmod +x conformance-java-lite
 
 # Currently the conformance code is alongside the rest of the C#
 # source, as it's easier to maintain there. We assume we've already
@@ -102,7 +152,10 @@ test_cpp: protoc_middleman conformance-test-runner conformance-cpp
 	./conformance-test-runner --failure_list failure_list_cpp.txt ./conformance-cpp
 
 test_java: protoc_middleman conformance-test-runner conformance-java
-	./conformance-test-runner ./conformance-java
+	./conformance-test-runner --failure_list failure_list_java.txt ./conformance-java
+
+test_java_lite: protoc_middleman conformance-test-runner conformance-java-lite
+	./conformance-test-runner ./conformance-java-lite
 
 test_csharp: protoc_middleman conformance-test-runner conformance-csharp
 	./conformance-test-runner --failure_list failure_list_csharp.txt ./conformance-csharp
@@ -113,10 +166,10 @@ test_ruby: protoc_middleman conformance-test-runner $(other_language_protoc_outp
 # These depend on library paths being properly set up.  The easiest way to
 # run them is to just use "tox" from the python dir.
 test_python: protoc_middleman conformance-test-runner
-	./conformance-test-runner --failure_list failure_list_python.txt ./conformance_python.py
+	./conformance-test-runner --failure_list failure_list_python.txt $(CONFORMANCE_PYTHON_EXTRA_FAILURES) ./conformance_python.py
 
 test_python_cpp: protoc_middleman conformance-test-runner
-	./conformance-test-runner --failure_list failure_list_python_cpp.txt ./conformance_python.py
+	./conformance-test-runner --failure_list failure_list_python_cpp.txt $(CONFORMANCE_PYTHON_EXTRA_FAILURES) ./conformance_python.py
 
 if OBJC_CONFORMANCE_TEST
 

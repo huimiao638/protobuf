@@ -53,11 +53,16 @@ import six
 import sys
 
 try:
-  import unittest2 as unittest
+  import unittest2 as unittest  #PY26
 except ImportError:
   import unittest
+
 from google.protobuf.internal import _parameterized
+from google.protobuf import descriptor_pb2
+from google.protobuf import descriptor_pool
 from google.protobuf import map_unittest_pb2
+from google.protobuf import message_factory
+from google.protobuf import text_format
 from google.protobuf import unittest_pb2
 from google.protobuf import unittest_proto3_arena_pb2
 from google.protobuf.internal import api_implementation
@@ -67,6 +72,7 @@ from google.protobuf import message
 
 if six.PY3:
   long = int
+
 
 # Python pre-2.6 does not have isinf() or isnan() functions, so we have
 # to provide our own.
@@ -1156,6 +1162,7 @@ class Proto2Test(unittest.TestCase):
       unittest_pb2.TestAllTypes(repeated_nested_enum='FOO')
 
 
+
 # Class to test proto3-only features/behavior (updated field presence & enums)
 class Proto3Test(unittest.TestCase):
 
@@ -1279,12 +1286,13 @@ class Proto3Test(unittest.TestCase):
 
     self.assertIsInstance(msg.map_string_string['abc'], six.text_type)
 
-    # Accessing an unset key still throws TypeError of the type of the key
+    # Accessing an unset key still throws TypeError if the type of the key
     # is incorrect.
     with self.assertRaises(TypeError):
       msg.map_string_string[123]
 
-    self.assertFalse(123 in msg.map_string_string)
+    with self.assertRaises(TypeError):
+      123 in msg.map_string_string
 
   def testMapGet(self):
     # Need to test that get() properly returns the default, even though the dict
@@ -1446,6 +1454,22 @@ class Proto3Test(unittest.TestCase):
     del msg2.map_int32_foreign_message[222]
     self.assertFalse(222 in msg2.map_int32_foreign_message)
 
+  def testMergeFromBadType(self):
+    msg = map_unittest_pb2.TestMap()
+    with self.assertRaisesRegexp(
+        TypeError,
+        r'Parameter to MergeFrom\(\) must be instance of same class: expected '
+        r'.*TestMap got int\.'):
+      msg.MergeFrom(1)
+
+  def testCopyFromBadType(self):
+    msg = map_unittest_pb2.TestMap()
+    with self.assertRaisesRegexp(
+        TypeError,
+        r'Parameter to [A-Za-z]*From\(\) must be instance of same class: '
+        r'expected .*TestMap got int\.'):
+      msg.CopyFrom(1)
+
   def testIntegerMapWithLongs(self):
     msg = map_unittest_pb2.TestMap()
     msg.map_int32_int32[long(-123)] = long(-456)
@@ -1591,31 +1615,49 @@ class Proto3Test(unittest.TestCase):
     # For the C++ implementation this tests the correctness of
     # ScalarMapContainer::Release()
     msg = map_unittest_pb2.TestMap()
-    map = msg.map_int32_int32
+    int32_map = msg.map_int32_int32
 
-    map[2] = 4
-    map[3] = 6
-    map[4] = 8
+    int32_map[2] = 4
+    int32_map[3] = 6
+    int32_map[4] = 8
 
     msg.ClearField('map_int32_int32')
+    self.assertEqual(b'', msg.SerializeToString())
     matching_dict = {2: 4, 3: 6, 4: 8}
-    self.assertMapIterEquals(map.items(), matching_dict)
+    self.assertMapIterEquals(int32_map.items(), matching_dict)
 
-  def testMapIterValidAfterFieldCleared(self):
-    # Map iterator needs to work even if field is cleared.
+  def testMessageMapValidAfterFieldCleared(self):
+    # Map needs to work even if field is cleared.
+    # For the C++ implementation this tests the correctness of
+    # ScalarMapContainer::Release()
+    msg = map_unittest_pb2.TestMap()
+    int32_foreign_message = msg.map_int32_foreign_message
+
+    int32_foreign_message[2].c = 5
+
+    msg.ClearField('map_int32_foreign_message')
+    self.assertEqual(b'', msg.SerializeToString())
+    self.assertTrue(2 in int32_foreign_message.keys())
+
+  def testMapIterInvalidatedByClearField(self):
+    # Map iterator is invalidated when field is cleared.
+    # But this case does need to not crash the interpreter.
     # For the C++ implementation this tests the correctness of
     # ScalarMapContainer::Release()
     msg = map_unittest_pb2.TestMap()
 
-    msg.map_int32_int32[2] = 4
-    msg.map_int32_int32[3] = 6
-    msg.map_int32_int32[4] = 8
-
-    it = msg.map_int32_int32.items()
+    it = iter(msg.map_int32_int32)
 
     msg.ClearField('map_int32_int32')
-    matching_dict = {2: 4, 3: 6, 4: 8}
-    self.assertMapIterEquals(it, matching_dict)
+    with self.assertRaises(RuntimeError):
+      for _ in it:
+        pass
+
+    it = iter(msg.map_int32_foreign_message)
+    msg.ClearField('map_int32_foreign_message')
+    with self.assertRaises(RuntimeError):
+      for _ in it:
+        pass
 
   def testMapDelete(self):
     msg = map_unittest_pb2.TestMap()
@@ -1724,6 +1766,61 @@ class PackedFieldTest(unittest.TestCase):
                    b'\x68\x01'
                    b'\x70\x01')
     self.assertEqual(golden_data, message.SerializeToString())
+
+
+@unittest.skipIf(api_implementation.Type() != 'cpp',
+                 'explicit tests of the C++ implementation')
+class OversizeProtosTest(unittest.TestCase):
+
+  def setUp(self):
+    self.file_desc = """
+      name: "f/f.msg2"
+      package: "f"
+      message_type {
+        name: "msg1"
+        field {
+          name: "payload"
+          number: 1
+          label: LABEL_OPTIONAL
+          type: TYPE_STRING
+        }
+      }
+      message_type {
+        name: "msg2"
+        field {
+          name: "field"
+          number: 1
+          label: LABEL_OPTIONAL
+          type: TYPE_MESSAGE
+          type_name: "msg1"
+        }
+      }
+    """
+    pool = descriptor_pool.DescriptorPool()
+    desc = descriptor_pb2.FileDescriptorProto()
+    text_format.Parse(self.file_desc, desc)
+    pool.Add(desc)
+    self.proto_cls = message_factory.MessageFactory(pool).GetPrototype(
+        pool.FindMessageTypeByName('f.msg2'))
+    self.p = self.proto_cls()
+    self.p.field.payload = 'c' * (1024 * 1024 * 64 + 1)
+    self.p_serialized = self.p.SerializeToString()
+
+  def testAssertOversizeProto(self):
+    from google.protobuf.pyext._message import SetAllowOversizeProtos
+    SetAllowOversizeProtos(False)
+    q = self.proto_cls()
+    try:
+      q.ParseFromString(self.p_serialized)
+    except message.DecodeError as e:
+      self.assertEqual(str(e), 'Error parsing message')
+
+  def testSucceedOversizeProto(self):
+    from google.protobuf.pyext._message import SetAllowOversizeProtos
+    SetAllowOversizeProtos(True)
+    q = self.proto_cls()
+    q.ParseFromString(self.p_serialized)
+    self.assertEqual(self.p.field.payload, q.field.payload)
 
 if __name__ == '__main__':
   unittest.main()

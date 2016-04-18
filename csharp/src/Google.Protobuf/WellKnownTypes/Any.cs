@@ -29,8 +29,8 @@ namespace Google.Protobuf.WellKnownTypes {
             "bGUuUHJvdG9idWYuV2VsbEtub3duVHlwZXNiBnByb3RvMw=="));
       descriptor = pbr::FileDescriptor.FromGeneratedCode(descriptorData,
           new pbr::FileDescriptor[] { },
-          new pbr::GeneratedCodeInfo(null, new pbr::GeneratedCodeInfo[] {
-            new pbr::GeneratedCodeInfo(typeof(global::Google.Protobuf.WellKnownTypes.Any), global::Google.Protobuf.WellKnownTypes.Any.Parser, new[]{ "TypeUrl", "Value" }, null, null, null)
+          new pbr::GeneratedClrTypeInfo(null, new pbr::GeneratedClrTypeInfo[] {
+            new pbr::GeneratedClrTypeInfo(typeof(global::Google.Protobuf.WellKnownTypes.Any), global::Google.Protobuf.WellKnownTypes.Any.Parser, new[]{ "TypeUrl", "Value" }, null, null, null)
           }));
     }
     #endregion
@@ -61,8 +61,8 @@ namespace Google.Protobuf.WellKnownTypes {
   ///
   ///  If the embedded message type is well-known and has a custom JSON
   ///  representation, that representation will be embedded adding a field
-  ///  `value` which holds the custom JSON in addition to the the `@type`
-  ///  field. Example (for message [google.protobuf.Duration][google.protobuf.Duration]):
+  ///  `value` which holds the custom JSON in addition to the `@type`
+  ///  field. Example (for message [google.protobuf.Duration][]):
   ///
   ///      {
   ///        "@type": "type.googleapis.com/google.protobuf.Duration",
@@ -110,7 +110,7 @@ namespace Google.Protobuf.WellKnownTypes {
     ///  * If no schema is provided, `https` is assumed.
     ///  * The last segment of the URL's path must represent the fully
     ///    qualified name of the type (as in `path/google.protobuf.Duration`).
-    ///  * An HTTP GET on the URL must yield a [google.protobuf.Type][google.protobuf.Type]
+    ///  * An HTTP GET on the URL must yield a [google.protobuf.Type][]
     ///    value in binary format, or produce an error.
     ///  * Applications are allowed to cache lookup results based on the
     ///    URL, or have them precompiled into a binary to avoid any
@@ -124,7 +124,7 @@ namespace Google.Protobuf.WellKnownTypes {
     public string TypeUrl {
       get { return typeUrl_; }
       set {
-        typeUrl_ = pb::Preconditions.CheckNotNull(value, "value");
+        typeUrl_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -137,7 +137,7 @@ namespace Google.Protobuf.WellKnownTypes {
     public pb::ByteString Value {
       get { return value_; }
       set {
-        value_ = pb::Preconditions.CheckNotNull(value, "value");
+        value_ = pb::ProtoPreconditions.CheckNotNull(value, "value");
       }
     }
 
@@ -165,7 +165,7 @@ namespace Google.Protobuf.WellKnownTypes {
     }
 
     public override string ToString() {
-      return pb::JsonFormatter.Default.Format(this);
+      return pb::JsonFormatter.ToDiagnosticString(this);
     }
 
     public void WriteTo(pb::CodedOutputStream output) {

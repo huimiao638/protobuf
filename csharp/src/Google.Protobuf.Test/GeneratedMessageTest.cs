@@ -221,7 +221,7 @@ namespace Google.Protobuf
                 },
                 MapInt32ForeignMessage = {
                     { 0, new ForeignMessage { C = 10 } },
-                    { 5, null },
+                    { 5, new ForeignMessage() },
                 },
                 MapInt32Enum = {
                     { 1, MapEnum.MAP_ENUM_BAR },
@@ -266,6 +266,40 @@ namespace Google.Protobuf
 
             var parsed = TestMap.Parser.ParseFrom(memoryStream.ToArray());
             Assert.AreEqual(nestedMessage, parsed.MapInt32ForeignMessage[0]);
+        }
+
+        [Test]
+        public void MapWithOnlyKey_PrimitiveValue()
+        {
+            // Hand-craft the stream to contain a single entry with just a key.
+            var memoryStream = new MemoryStream();
+            var output = new CodedOutputStream(memoryStream);
+            output.WriteTag(TestMap.MapInt32DoubleFieldNumber, WireFormat.WireType.LengthDelimited);
+            int key = 10;
+            output.WriteLength(1 + CodedOutputStream.ComputeInt32Size(key));
+            output.WriteTag(1, WireFormat.WireType.Varint);
+            output.WriteInt32(key);
+            output.Flush();
+
+            var parsed = TestMap.Parser.ParseFrom(memoryStream.ToArray());
+            Assert.AreEqual(0.0, parsed.MapInt32Double[key]);
+        }
+
+        [Test]
+        public void MapWithOnlyKey_MessageValue()
+        {
+            // Hand-craft the stream to contain a single entry with just a key.
+            var memoryStream = new MemoryStream();
+            var output = new CodedOutputStream(memoryStream);
+            output.WriteTag(TestMap.MapInt32ForeignMessageFieldNumber, WireFormat.WireType.LengthDelimited);
+            int key = 10;
+            output.WriteLength(1 + CodedOutputStream.ComputeInt32Size(key));
+            output.WriteTag(1, WireFormat.WireType.Varint);
+            output.WriteInt32(key);
+            output.Flush();
+
+            var parsed = TestMap.Parser.ParseFrom(memoryStream.ToArray());
+            Assert.AreEqual(new ForeignMessage(), parsed.MapInt32ForeignMessage[key]);
         }
 
         [Test]
@@ -645,21 +679,45 @@ namespace Google.Protobuf
         /// for details; we may want to change this.
         /// </summary>
         [Test]
-        public void ExtraEndGroupSkipped()
+        public void ExtraEndGroupThrows()
         {
             var message = SampleMessages.CreateFullTestAllTypes();
             var stream = new MemoryStream();
             var output = new CodedOutputStream(stream);
 
-            output.WriteTag(100, WireFormat.WireType.EndGroup);
             output.WriteTag(TestAllTypes.SingleFixed32FieldNumber, WireFormat.WireType.Fixed32);
             output.WriteFixed32(123);
+            output.WriteTag(100, WireFormat.WireType.EndGroup);
 
             output.Flush();
 
             stream.Position = 0;
-            var parsed = TestAllTypes.Parser.ParseFrom(stream);
-            Assert.AreEqual(new TestAllTypes { SingleFixed32 = 123 }, parsed);
+            Assert.Throws<InvalidProtocolBufferException>(() => TestAllTypes.Parser.ParseFrom(stream));
+        }
+
+        [Test]
+        public void CustomDiagnosticMessage_DirectToStringCall()
+        {
+            var message = new ForeignMessage { C = 31 };
+            Assert.AreEqual("{ \"c\": 31, \"@cInHex\": \"1f\" }", message.ToString());
+            Assert.AreEqual("{ \"c\": 31 }", JsonFormatter.Default.Format(message));
+        }
+
+        [Test]
+        public void CustomDiagnosticMessage_Nested()
+        {
+            var message = new TestAllTypes { SingleForeignMessage = new ForeignMessage { C = 16 } };
+            Assert.AreEqual("{ \"singleForeignMessage\": { \"c\": 16, \"@cInHex\": \"10\" } }", message.ToString());
+            Assert.AreEqual("{ \"singleForeignMessage\": { \"c\": 16 } }", JsonFormatter.Default.Format(message));
+        }
+
+        [Test]
+        public void CustomDiagnosticMessage_DirectToTextWriterCall()
+        {
+            var message = new ForeignMessage { C = 31 };
+            var writer = new StringWriter();
+            JsonFormatter.Default.Format(message, writer);
+            Assert.AreEqual("{ \"c\": 31 }", writer.ToString());
         }
     }
 }

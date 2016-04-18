@@ -87,11 +87,13 @@ void SetPrimitiveVariables(const FieldDescriptor* descriptor,
       (*variables)["field_list_type"] =
           "com.google.protobuf.Internal." + capitalized_type + "List";
       (*variables)["new_list"] = "new" + capitalized_type + "List";
+      (*variables)["new_list_with_capacity"] =
+          "new" + capitalized_type + "ListWithCapacity";
       (*variables)["empty_list"] = "empty" + capitalized_type + "List()";
       (*variables)["make_name_unmodifiable"] =
           (*variables)["name"] + "_.makeImmutable()";
-      (*variables)["repeated_index_get"] =
-          (*variables)["name"] + "_.get" + capitalized_type + "(index)";
+      (*variables)["repeated_get"] =
+          (*variables)["name"] + "_.get" + capitalized_type;
       (*variables)["repeated_add"] =
           (*variables)["name"] + "_.add" + capitalized_type;
       (*variables)["repeated_set"] =
@@ -102,11 +104,11 @@ void SetPrimitiveVariables(const FieldDescriptor* descriptor,
           "com.google.protobuf.Internal.ProtobufList<" +
           (*variables)["boxed_type"] + ">";
       (*variables)["new_list"] = "newProtobufList";
+      (*variables)["new_list_with_capacity"] = "newProtobufListWithCapacity";
       (*variables)["empty_list"] = "emptyProtobufList()";
       (*variables)["make_name_unmodifiable"] =
           (*variables)["name"] + "_.makeImmutable()";
-      (*variables)["repeated_index_get"] =
-          (*variables)["name"] + "_.get(index)";
+      (*variables)["repeated_get"] = (*variables)["name"] + "_.get";
       (*variables)["repeated_add"] = (*variables)["name"] + "_.add";
       (*variables)["repeated_set"] = (*variables)["name"] + "_.set";
   }
@@ -127,8 +129,6 @@ void SetPrimitiveVariables(const FieldDescriptor* descriptor,
   if (fixed_size != -1) {
     (*variables)["fixed_size"] = SimpleItoa(fixed_size);
   }
-  (*variables)["on_changed"] =
-      HasDescriptorMethods(descriptor->containing_type()) ? "onChanged();" : "";
 
   if (SupportFieldPresence(descriptor->file())) {
     // For singular messages and builders, one bit is used for the hasField bit.
@@ -629,11 +629,11 @@ GenerateMembers(io::Printer* printer) const {
   WriteFieldDocComment(printer, descriptor_);
   printer->Print(variables_,
     "$deprecation$public $type$ get$capitalized_name$(int index) {\n"
-    "  return $repeated_index_get$;\n"
+    "  return $repeated_get$(index);\n"
     "}\n");
 
   if (descriptor_->options().packed() &&
-      HasGeneratedMethods(descriptor_->containing_type())) {
+      context_->HasGeneratedMethods(descriptor_->containing_type())) {
     printer->Print(variables_,
       "private int $name$MemoizedSerializedSize = -1;\n");
   }
@@ -756,7 +756,6 @@ GenerateMergingCode(io::Printer* printer) const {
     "    ensure$capitalized_name$IsMutable();\n"
     "    $name$_.addAll(other.$name$_);\n"
     "  }\n"
-    "  $on_changed$\n"
     "}\n");
 }
 
@@ -773,6 +772,9 @@ GenerateDynamicMethodMakeImmutableCode(io::Printer* printer) const {
 
 void RepeatedImmutablePrimitiveFieldLiteGenerator::
 GenerateParsingCode(io::Printer* printer) const {
+  // TODO(dweis): Scan the input buffer to count, then initialize
+  // appropriately.
+  // TODO(dweis): Scan the input buffer to count and ensure capacity.
   printer->Print(variables_,
     "if (!$is_mutable$) {\n"
     "  $name$_ = $new_list$();\n"
@@ -785,8 +787,21 @@ GenerateParsingCodeFromPacked(io::Printer* printer) const {
   printer->Print(variables_,
     "int length = input.readRawVarint32();\n"
     "int limit = input.pushLimit(length);\n"
-    "if (!$is_mutable$ && input.getBytesUntilLimit() > 0) {\n"
-    "  $name$_ = $new_list$();\n"
+    "if (!$is_mutable$ && input.getBytesUntilLimit() > 0) {\n");
+
+  int fixed_size = FixedSize(GetType(descriptor_));
+  if (fixed_size == -1) {
+    // TODO(dweis): Scan the input buffer to count, then initialize
+    // appropriately.
+    printer->Print(variables_,
+      "  $name$_ = $new_list$();\n");
+  } else {
+    printer->Print(variables_,
+      "  $name$_ = $new_list_with_capacity$(length/$fixed_size$);\n");
+  }
+
+  // TODO(dweis): Scan the input buffer to count and ensure capacity.
+  printer->Print(variables_,
     "}\n"
     "while (input.getBytesUntilLimit() > 0) {\n"
     "  $repeated_add$(input.read$capitalized_type$());\n"
@@ -814,12 +829,12 @@ GenerateSerializationCode(io::Printer* printer) const {
       "  output.writeRawVarint32($name$MemoizedSerializedSize);\n"
       "}\n"
       "for (int i = 0; i < $name$_.size(); i++) {\n"
-      "  output.write$capitalized_type$NoTag($name$_.get(i));\n"
+      "  output.write$capitalized_type$NoTag($repeated_get$(i));\n"
       "}\n");
   } else {
     printer->Print(variables_,
       "for (int i = 0; i < $name$_.size(); i++) {\n"
-      "  output.write$capitalized_type$($number$, $name$_.get(i));\n"
+      "  output.write$capitalized_type$($number$, $repeated_get$(i));\n"
       "}\n");
   }
 }
@@ -835,7 +850,7 @@ GenerateSerializedSizeCode(io::Printer* printer) const {
     printer->Print(variables_,
       "for (int i = 0; i < $name$_.size(); i++) {\n"
       "  dataSize += com.google.protobuf.CodedOutputStream\n"
-      "    .compute$capitalized_type$SizeNoTag($name$_.get(i));\n"
+      "    .compute$capitalized_type$SizeNoTag($repeated_get$(i));\n"
       "}\n");
   } else {
     printer->Print(variables_,

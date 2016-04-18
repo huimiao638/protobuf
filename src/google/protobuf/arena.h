@@ -56,6 +56,7 @@ using type_info = ::type_info;
 #include <google/protobuf/stubs/mutex.h>
 #include <google/protobuf/stubs/type_traits.h>
 
+
 namespace google {
 namespace protobuf {
 
@@ -76,7 +77,7 @@ template<typename T> void arena_destruct_object(void* object) {
 template<typename T> void arena_delete_object(void* object) {
   delete reinterpret_cast<T*>(object);
 }
-inline void arena_free(void* object, size_t size) {
+inline void arena_free(void* object, size_t /* size */) {
   free(object);
 }
 
@@ -229,6 +230,7 @@ class LIBPROTOBUF_EXPORT Arena {
   // destructors can be skipped. Also, frees all blocks except the initial block
   // if it was passed in.
   ~Arena();
+
 
   // API to create proto2 message objects on the arena. If the arena passed in
   // is NULL, then a heap allocated object is returned. Type T must be a message
@@ -507,11 +509,11 @@ class LIBPROTOBUF_EXPORT Arena {
   //
   // This is inside Arena because only Arena has the friend relationships
   // necessary to see the underlying generated code traits.
-  template<typename T>
-  struct is_arena_constructable :
-      public google::protobuf::internal::integral_constant<bool,
-          sizeof(InternalIsArenaConstructableHelper::ArenaConstructable<
-                 const T>(static_cast<const T*>(0))) == sizeof(char)> {
+  template <typename T>
+  struct is_arena_constructable
+      : public google::protobuf::internal::integral_constant<
+            bool, sizeof(InternalIsArenaConstructableHelper::ArenaConstructable<
+                         const T>(static_cast<const T*>(0))) == sizeof(char)> {
   };
 
  private:
@@ -591,14 +593,12 @@ class LIBPROTOBUF_EXPORT Arena {
   // This is inside Arena because only Arena has the friend relationships
   // necessary to see the underlying generated code traits.
   template<typename T>
-  struct is_destructor_skippable :
-      public google::protobuf::internal::integral_constant<bool,
-              sizeof(InternalIsDestructorSkippableHelper::DestructorSkippable<
-                     const T>(static_cast<const T*>(0))) ==
-              sizeof(char) ||
-              google::protobuf::internal::has_trivial_destructor<T>::value> {
-  };
-
+  struct is_destructor_skippable
+      : public google::protobuf::internal::integral_constant<
+            bool,
+            sizeof(InternalIsDestructorSkippableHelper::DestructorSkippable<
+                   const T>(static_cast<const T*>(0))) == sizeof(char) ||
+                google::protobuf::internal::has_trivial_destructor<T>::value> {};
 
   // CreateMessage<T> requires that T supports arenas, but this private method
   // works whether or not T supports arenas. These are not exposed to user code

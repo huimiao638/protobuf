@@ -52,7 +52,12 @@ class Descriptor;
 class DescriptorPool;
 class MessageFactory;
 
+#ifdef _SHARED_PTR_H
+using shared_ptr;
+using std::std::string;
+#else
 using internal::shared_ptr;
+#endif
 
 namespace python {
 
@@ -302,6 +307,7 @@ bool CheckAndGetInteger(
 bool CheckAndGetDouble(PyObject* arg, double* value);
 bool CheckAndGetFloat(PyObject* arg, float* value);
 bool CheckAndGetBool(PyObject* arg, bool* value);
+PyObject* CheckString(PyObject* arg, const FieldDescriptor* descriptor);
 bool CheckAndSetString(
     PyObject* arg, Message* message,
     const FieldDescriptor* descriptor,
