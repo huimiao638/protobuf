@@ -266,6 +266,7 @@ cc_library(
         "src/google/protobuf/compiler/java/java_enum_field_lite.cc",
         "src/google/protobuf/compiler/java/java_enum_lite.cc",
         "src/google/protobuf/compiler/java/java_extension.cc",
+        "src/google/protobuf/compiler/java/java_extension_lite.cc",
         "src/google/protobuf/compiler/java/java_field.cc",
         "src/google/protobuf/compiler/java/java_file.cc",
         "src/google/protobuf/compiler/java/java_generator.cc",
@@ -376,6 +377,8 @@ RELATIVE_TEST_PROTOS = [
     "google/protobuf/unittest_preserve_unknown_enum.proto",
     "google/protobuf/unittest_preserve_unknown_enum2.proto",
     "google/protobuf/unittest_proto3_arena.proto",
+    "google/protobuf/unittest_proto3_arena_lite.proto",
+    "google/protobuf/unittest_proto3_lite.proto",
     "google/protobuf/unittest_well_known_types.proto",
     "google/protobuf/util/internal/testdata/anys.proto",
     "google/protobuf/util/internal/testdata/books.proto",
@@ -436,6 +439,7 @@ cc_test(
         "src/google/protobuf/compiler/cpp/cpp_bootstrap_unittest.cc",
         "src/google/protobuf/compiler/cpp/cpp_plugin_unittest.cc",
         "src/google/protobuf/compiler/cpp/cpp_unittest.cc",
+        "src/google/protobuf/compiler/cpp/metadata_test.cc",
         "src/google/protobuf/compiler/csharp/csharp_generator_unittest.cc",
         "src/google/protobuf/compiler/importer_unittest.cc",
         "src/google/protobuf/compiler/java/java_doc_comment_unittest.cc",
@@ -461,6 +465,8 @@ cc_test(
         "src/google/protobuf/no_field_presence_test.cc",
         "src/google/protobuf/preserve_unknown_enum_test.cc",
         "src/google/protobuf/proto3_arena_unittest.cc",
+        "src/google/protobuf/proto3_arena_lite_unittest.cc",
+        "src/google/protobuf/proto3_lite_unittest.cc",
         "src/google/protobuf/reflection_ops_unittest.cc",
         "src/google/protobuf/repeated_field_reflection_unittest.cc",
         "src/google/protobuf/repeated_field_unittest.cc",
@@ -535,9 +541,9 @@ java_library(
         "java/util/src/main/java/com/google/protobuf/util/*.java",
     ]),
     deps = [
-      "protobuf_java",
-      "//external:gson",
-      "//external:guava",
+        "protobuf_java",
+        "//external:gson",
+        "//external:guava",
     ],
     visibility = ["//visibility:public"],
 )
@@ -558,6 +564,7 @@ py_library(
             "python/google/protobuf/internal/test_util.py",
         ],
     ),
+    srcs_version = "PY2AND3",
     imports = ["python"],
 )
 
@@ -642,6 +649,7 @@ py_proto_library(
     include = "src",
     default_runtime = "",
     protoc = ":protoc",
+    srcs_version = "PY2AND3",
     deps = [":protobuf_python"],
 )
 
@@ -654,6 +662,7 @@ py_proto_library(
     include = "python",
     default_runtime = ":protobuf_python",
     protoc = ":protoc",
+    srcs_version = "PY2AND3",
     deps = [":python_common_test_protos"],
 )
 
